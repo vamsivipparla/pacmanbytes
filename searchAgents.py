@@ -34,6 +34,8 @@ description for details.
 Good luck and happy searching!
 """
 
+from email import utils
+from operator import truediv
 from game import Directions
 from game import Agent
 from game import Actions
@@ -327,14 +329,25 @@ class CornersProblem(search.SearchProblem):
         for action in [Directions.NORTH, Directions.SOUTH, Directions.EAST, Directions.WEST]:
             # Add a successor state to the successor list if the action is legal
             # Here's a code snippet for figuring out whether a new position hits a wall:
-            #   xcor,ycor = currentPosition
-            #   dirx, diry = Actions.directionToVector(action)
-            #   nx, ny = int(x + dirx), int(y + diry)
-            #   hittingWall = self.walls[nx][ny]
-            
-             "*** YOUR CODE HERE ***"
+            #   x,y = currentPosition
+            #   dx, dy = Actions.directionToVector(action)
+            #   nextx, nexty = int(x + dx), int(y + dy)
+            #   hitsWall = self.walls[nextx][nexty]
 
-        self._expanded += 1  # DO NOT CHANGE
+            x,y = state[0]
+            alreadyVisited = state[1]        
+            dx, dy = Actions.directionToVector(action)
+            nextx, nexty = int(x + dx), int(y + dy)
+            hitsWall = self.walls[nextx][nexty]
+            if not hitsWall:
+                next_state = (nextx, nexty)
+                visitedCornersSet = set(alreadyVisited)
+                if next_state in self.corners:
+                    if next_state not in visitedCornersSet:
+                        visitedCornersSet.add(next_state)
+                child = ((next_state, visitedCornersSet), action, 1)
+                successors.append(child)      
+        self._expanded += 1 # DO NOT CHANGE
         return successors
 
     def getCostOfActions(self, actions):
@@ -384,8 +397,18 @@ def cornersHeuristic(state, problem):
     """
     corners = problem.corners # These are the corner coordinates
     walls = problem.walls # These are the walls of the maze, as a Grid (game.py)
+    currentNode = state[0]
+    alreadyVisited = state[1]
+    toBeVisited = set(corners)^set(alreadyVisited)
+    if len(alreadyVisited) == 4:
+        return 0
+    manhattan = 0
+    for node in toBeVisited:
+        temp = util.manhattanDistance(currentNode,node)
+        if temp > manhattan:
+            manhattan = temp
 
-    return 0 # Default to trivial solution
+    return manhattan
 
 class AStarCornersAgent(SearchAgent):
     "A SearchAgent for FoodSearchProblem using A* and your foodHeuristic"

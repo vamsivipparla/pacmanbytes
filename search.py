@@ -86,99 +86,66 @@ def depthFirstSearch(problem):
     print("Is the start a goal?", problem.isGoalState(problem.getStartState()))
     print("Start's successors:", problem.getSuccessors(problem.getStartState()))
     """
-    "*** YOUR CODE HERE ***"
+    fringe = util.Stack();
+    closedSet = set();
+    initialCost = 0;
+    initialPath = [];
+    initialNode = problem.getStartState()
 
-    dfs_s = util.Stack()
-    """defining a stack using the util package"""
-    dfs_s.push((problem.getStartState(), [])) 
-    node_checked = list()
-    """Defining a list for all the nodes that are already visited"""
-
-    while not dfs_s.isEmpty():
-        stateInPresent, steps = dfs_s.pop()
-        if stateInPresent in node_checked: continue
-        if problem.isGoalState(stateInPresent): return steps
-        """ if the goal state is same as the current state, return the solution"""
-
-        node_checked.append(stateInPresent)
-        """ Add all the current nodes after every loop to the list of already visited nodes"""
-        for s,a,c in problem.getSuccessors(stateInPresent):
-            dfs_s.push((s, steps + [ a ]))
-
-    return []
-
-
-
-
-
-
-
-    
-    
-    
-    
-    
+    fringe.push((initialNode,initialCost,initialPath))
+    while not fringe.isEmpty():
+        (expandedNode,expandedCost,expandedPath)=fringe.pop();
+        if(problem.isGoalState(expandedNode)):
+            return expandedPath
+        if not expandedNode in closedSet:
+            closedSet.add(expandedNode)
+            for (successorNode,action,actionCost) in problem.getSuccessors(expandedNode):
+                successorCost = expandedCost + actionCost
+                successorPath = expandedPath + [action]
+                successorState = (successorNode,successorCost,successorPath)
+                fringe.push(successorState)
 
 def breadthFirstSearch(problem):
     """Search the shallowest nodes in the search tree first."""
-    "*** YOUR CODE HERE ***"
-    bfs_q = util.Queue() 
-    
-    bfs_q.push((problem.getStartState(), [])) 
-    node_checked = []
-    """Defining an empty list for the already visited nodes"""
+    fringe = util.Queue()
+    closedSet = []
+    initialCost = 0
+    initialPath = []
+    initialNode = problem.getStartState()
 
-    while not bfs_q.isEmpty(): 
-        stateInPresent, steps = bfs_q.pop() #pooping the stack and storing the state and actions in the current states and actions
-        if stateInPresent not in node_checked:   
-            node_checked.append(stateInPresent)
-            if problem.isGoalState(stateInPresent): 
-                return steps # if the goal state is same as the current state then return the solution
-            else:
-                
-                    next_state = problem.getSuccessors(stateInPresent)
-                      
-                    for state in next_state:
-                            bfs_q.push((state[0], steps + [state[1]]))
-    return []
+    fringe.push((initialNode,initialCost,initialPath))
+    while not fringe.isEmpty():
+        (expandedNode,expandedCost,expandedPath)=fringe.pop()
+        if(problem.isGoalState(expandedNode)):
+            return expandedPath
+        if not expandedNode in closedSet:
+            closedSet.append(expandedNode)
+            for (successorNode,action,actionCost) in problem.getSuccessors(expandedNode):
+                successorCost = expandedCost + actionCost
+                successorPath = expandedPath + [action]
+                successorState = (successorNode,successorCost,successorPath)
+                fringe.push(successorState)
     util.raiseNotDefined()
 
 def uniformCostSearch(problem):
     """Search the node of least total cost first."""
-    "*** YOUR CODE HERE ***"
-    ucs_q = util.PriorityQueue()
-    """We are using the priority queue data structure from the util.py package"""
-    ucs_q.push((problem.getStartState(), [], 0), 0)
-    """we are pushing the starting states of our problem into the priority queue in this step"""
-    """Initially, the steps and cost are both zero for the start state"""
-    
-    node_checked = list()
-    """ here we are defining the list as the nodes that are visited """
-
-    
-
-    while not ucs_q.isEmpty():
-        """whenever the priority queue is not empty, the while loop will execute""" 
-        stateInPresent, steps, cost = ucs_q.pop()
-        """popping the queue to check the present state of the node"""
-        if stateInPresent in node_checked:
-            continue
-        """ if the present state is present in the checked nodes that is the nodes that are visited, our search will continue"""
-        
-        if problem.isGoalState(stateInPresent):
-            return steps
-        """if our present state is same as the goalstate, we return the total steps"""
-
-        node_checked.append(stateInPresent)
-        """ adding all the checked nodes to our present state"""
-
-        
-        for s, a, c in problem.getSuccessors(stateInPresent):
-
-            """Gets the information of the successor state"""
-            ucs_q.push((s, steps + [ a ], cost + c), cost + c)
-
-    return []
+    fringewithPriority = util.PriorityQueue()
+    closedSet = []
+    initialCost = 0
+    initialPath = []
+    initialNode = problem.getStartState()
+    fringewithPriority.push((initialNode,initialCost,initialPath),initialCost)
+    while not fringewithPriority.isEmpty():
+        (expandedNode,expandedCost,expandedPath)=fringewithPriority.pop()
+        if(problem.isGoalState(expandedNode)):
+            return expandedPath
+        if not expandedNode in closedSet:
+            closedSet.append(expandedNode)
+            for (successorNode,action,actionCost) in problem.getSuccessors(expandedNode):
+                successorCost = expandedCost + actionCost
+                successorPath = expandedPath + [action]
+                successorState = (successorNode,successorCost,successorPath)
+                fringewithPriority.push(successorState,successorCost)   
 
 def nullHeuristic(state, problem=None):
     """
@@ -189,34 +156,23 @@ def nullHeuristic(state, problem=None):
 
 def aStarSearch(problem, heuristic=nullHeuristic):
     """Search the node that has the lowest combined cost and heuristic first."""
-    "*** YOUR CODE HERE ***"
-    astar_q = util.PriorityQueue()
-    #Initialiazing a priority queue for astar using the util package
-    
-
-    Initial_state = [problem.getStartState(), 0, []]
-    #Initially passing 0 for the steps and cost
-
-    push = 0
-
-    astar_q.push(Initial_state, push)  # Pushing the initial state in the priority queue
-
-    node_checked = []
-
-    #empty list for the already visited nodes
-
-    while not astar_q.isEmpty():
-        [s, c, p] = astar_q.pop()
-        # popping the first element of the stack and storing the states, actions and cost
-        if problem.isGoalState(s):
-            
-            return p  # if goal state is equal to the current state then return the solution
-        if s not in node_checked:
-            node_checked.append(s)
-            for next_state, next_steps, next_cost in problem.getSuccessors(s):
-                final_cost = c + next_cost
-                final_path = p + [next_steps, ]
-                astar_q.push([next_state, final_cost, final_path], final_cost + heuristic(next_state, problem))
+    fringewithPriority = util.PriorityQueue()
+    closedSet = []
+    initialCost = 0
+    initialPath = []
+    initialNode = problem.getStartState()
+    fringewithPriority.push((initialNode,initialCost,initialPath),initialCost+heuristic(initialNode,problem))
+    while not fringewithPriority.isEmpty():
+        (expandedNode,expandedCost,expandedPath)=fringewithPriority.pop()
+        if(problem.isGoalState(expandedNode)):
+            return expandedPath
+        if not expandedNode in closedSet:
+            closedSet.append(expandedNode)
+            for (successorNode,action,actionCost) in problem.getSuccessors(expandedNode):
+                successorCost = expandedCost + actionCost
+                successorPath = expandedPath + [action]
+                successorState = (successorNode,successorCost,successorPath)
+                fringewithPriority.push(successorState,successorCost+heuristic(successorNode,problem))     
     util.raiseNotDefined()
     
     

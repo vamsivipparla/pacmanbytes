@@ -35,7 +35,6 @@ Win Rate: 1/1 (1.00)
 Record: Win"
 
  
-<img src="/Users/mohilkhimani/Desktop/image.png" alt="Alt text" title="Optional title">
 
 
  

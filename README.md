@@ -14,7 +14,7 @@ Here the heuristic function used is euclidean, if we wish to use manhattan Heuri
 Here are some sample output.
 
 
-(cse571) mohilkhimani@Mohils-MacBook-Air 1.search % python pacman.py -l mediumMaze -p SearchAgent -a fn=bdmm,heuristic=euclideanHeuristic
+"(cse571) mohilkhimani@Mohils-MacBook-Air 1.search % python pacman.py -l mediumMaze -p SearchAgent -a fn=bdmm,heuristic=euclideanHeuristic
 
 [SearchAgent] using function bdmm and heuristic euclideanHeuristic
 
@@ -32,7 +32,7 @@ Scores: 433.0
 
 Win Rate: 1/1 (1.00)
 
-Record: Win
+Record: Win"
 
  
 
